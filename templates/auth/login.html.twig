@@ -5,17 +5,17 @@
 {% block body %}
     <div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">
         <div class="card max-w-[370px] w-full">
-            <form action="{{ path('auth.login') }}" class="card-body flex flex-col gap-5 p-10" id="sign_in_form" method="post">
+            <form action="{{ path('app_login') }}" class="card-body flex flex-col gap-5 p-10" id="sign_in_form" method="post">
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <div class="text-center mb-2.5">
                     <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
                         Connexion
                     </h3>
                     <div class="flex items-center justify-center font-medium">
-                       <span class="text-2sm text-gray-700 me-1.5">
-                        Pas de compte ?
-                       </span>
-                        <a class="text-2sm link" href="{{ path('auth.register') }}">
+                        <span class="text-2sm text-gray-700 me-1.5">
+                            Pas de compte ?
+                        </span>
+                        <a class="text-2sm link" href="{{ path('app_register') }}">
                             Inscription
                         </a>
                     </div>

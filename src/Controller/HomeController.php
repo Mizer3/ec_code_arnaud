@@ -32,14 +32,14 @@ class HomeController extends AbstractController
     }
 
 
-    #[Route('/login', name: 'auth.login')]
-    public function login(): Response
-    {
-        // Render the 'hello.html.twig' template
-        return $this->render('auth/login.html.twig', [
-            'name' => 'Thibaud', // Pass data to the view
-        ]);
-    }
+    // #[Route('/login', name: 'auth.login')]
+    // public function login(): Response
+    // {
+    //     // Render the 'hello.html.twig' template
+    //     return $this->render('auth/login.html.twig', [
+    //         'name' => 'Thibaud', // Pass data to the view
+    //     ]);
+    // }
 
     // #[Route('/register', name: 'auth.register')]
     // public function register(): Response
