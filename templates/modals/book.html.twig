@@ -1,0 +1,57 @@
+<div class="modal" data-modal="true" id="book_modal">
+    <div class="modal-content max-w-[600px] top-[15%]">
+        <div class="modal-header py-4 px-5">
+            <h3 class="modal-title">Ma lecture</h3>
+        </div>
+        <div class="modal-body p-0 pb-5">
+            <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-max-height="auto"
+                 data-scrollable-offset="300px">
+                <form>
+                    <div class="flex flex-col gap-5 p-5">
+                        <div class="flex flex-col gap-1">
+                            <label for="book" class="form-label font-normal text-gray-900">Livre</label>
+                            <select id="book" class="select">
+                                <option>Livre 1</option>
+                                <option>Livre 2</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="form-label font-normal text-gray-900">Mes notes</label>
+                            <div class="flex flex-col w-full gap-1">
+                            <textarea name="description" class="textarea"
+                                      placeholder="Notez-ici les idées importantes de l'oeuvre."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label for="book" class="form-label font-normal text-gray-900">Note</label>
+                            <select id="book" class="select" name="rating">
+                                <option>1</option>
+                                <option>1.5</option>
+                                <option>2</option>
+                                <option>2.5</option>
+                                <option>3</option>
+                                <option>3.5</option>
+                                <option>4</option>
+                                <option>4.5</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="switch">
+                                <span class="switch-label font-normal text-gray-900">Lecture terminée</span>
+                                <input name="check" type="checkbox" value="0"/>
+                            </label>
+                        </div>
+
+                        <div class="flex">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
