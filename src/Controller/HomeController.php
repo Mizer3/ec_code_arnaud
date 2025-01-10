@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Book;
 use App\Entity\BookRead;
+use App\Entity\Category;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +64,39 @@ class HomeController extends AbstractController
         //     $bookReadId = 1;
         // }
 
+        $categories = $entityManager->getRepository(Category::class)->findAll();
+
+        $categoryData = [];
+        foreach ($categories as $category) {
+            $booksReadCount = $entityManager->getRepository(BookRead::class)->createQueryBuilder('br')
+                ->select('count(br.id)')
+                ->join('br.book', 'b')
+                ->where('br.user = :user')
+                ->andWhere('b.category = :category')
+                ->andWhere('br.isFinished = false')
+                ->setParameter('user', $user)
+                ->setParameter('category', $category)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            $booksFinishedCount = $entityManager->getRepository(BookRead::class)->createQueryBuilder('br')
+                ->select('count(br.id)')
+                ->join('br.book', 'b')
+                ->where('br.user = :user')
+                ->andWhere('b.category = :category')
+                ->andWhere('br.isFinished = true')
+                ->setParameter('user', $user)
+                ->setParameter('category', $category)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            $categoryData[] = [
+                'name' => $category->getName(),
+                'booksReadCount' => $booksReadCount,
+                'booksFinishedCount' => $booksFinishedCount,
+            ];
+        }
+
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
             'books' => $allBooks,
@@ -72,7 +106,8 @@ class HomeController extends AbstractController
             'booksToRate' => $books,
             'booksReading' => $booksReading,
             // 'bookRead' => $bookRead,
-            'booksFinished' => $booksFinished,    
+            'booksFinished' => $booksFinished, 
+            'categoryData' => $categoryData,   
         ]);
     }
 
