@@ -22,9 +22,6 @@ class Book
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BIGINT)]
-    private ?string $category_id = null;
-
     #[ORM\Column]
     private ?int $pages = null;
 
@@ -42,6 +39,9 @@ class Book
      */
     #[ORM\OneToMany(targetEntity: BookRead::class, mappedBy: 'book')]
     private Collection $bookReads;
+
+    #[ORM\ManyToOne(inversedBy: 'books')]
+    private ?Category $category = null;
 
     public function __construct()
     {
@@ -73,18 +73,6 @@ class Book
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getCategoryId(): ?string
-    {
-        return $this->category_id;
-    }
-
-    public function setCategoryId(string $category_id): static
-    {
-        $this->category_id = $category_id;
 
         return $this;
     }
@@ -163,6 +151,18 @@ class Book
                 $bookRead->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

@@ -45,6 +45,10 @@ class HomeController extends AbstractController
             'user' => $user,
             'isFinished' => false,
         ]);
+        $booksFinished = $entityManager->getRepository(BookRead::class)->findBy([
+            'user' => $user,
+            'isFinished' => true,
+        ]);
 
         // $bookReadId = $request->query->get('bookReadId');
         // $bookRead = null;
@@ -67,7 +71,8 @@ class HomeController extends AbstractController
             'user' => $user,
             'booksToRate' => $books,
             'booksReading' => $booksReading,
-            // 'bookRead' => $bookRead,        
+            // 'bookRead' => $bookRead,
+            'booksFinished' => $booksFinished,    
         ]);
     }
 
