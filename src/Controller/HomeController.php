@@ -24,7 +24,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/', name: 'app.home')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request,EntityManagerInterface $entityManager): Response
     {
 
         $user       = $this->getUser();
@@ -37,10 +37,27 @@ class HomeController extends AbstractController
             return $bookRead->getBook()->getId();
         }, $ratedBooks);
 
-        // Filter out the rated books from all books
         $books = array_filter($allBooks, function (Book $book) use ($ratedBookIds) {
             return !in_array($book->getId(), $ratedBookIds);
         });
+
+        $booksReading = $entityManager->getRepository(BookRead::class)->findBy([
+            'user' => $user,
+            'isFinished' => false,
+        ]);
+
+        // $bookReadId = $request->query->get('bookReadId');
+        // $bookRead = null;
+        // if ($bookReadId) {
+        //     $bookRead = $entityManager->getRepository(BookRead::class)->find($bookReadId);
+        //     if ($bookRead) {
+        //         $request->getSession()->set('bookReadId', $bookReadId);
+        //     } else {
+        //         $this->addFlash('error', 'BookRead not found.');
+        //     }
+        // } else {
+        //     $bookReadId = 1;
+        // }
 
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
@@ -48,7 +65,9 @@ class HomeController extends AbstractController
             'booksRead' => $booksRead,
             'name' => 'Accueil', // Pass data to the view
             'user' => $user,
-            'booksToRate' => $books
+            'booksToRate' => $books,
+            'booksReading' => $booksReading,
+            // 'bookRead' => $bookRead,        
         ]);
     }
 
@@ -60,8 +79,6 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }        
 
-            
-
         $bookId = $request->request->get('book');
         $description = $request->request->get('comment');
         $rating = $request->request->get('rating');
@@ -69,18 +86,18 @@ class HomeController extends AbstractController
 
         $book = $entityManager->getRepository(Book::class)->find($bookId);
         if ($book) {
-                    // Check if the user has already rated this book
-                    $existingRating = $entityManager->getRepository(BookRead::class)->findOneBy([
-                        'user' => $user,
-                        'book' => $book,
-                    ]);
-                }
-            if ($existingRating) {
-                // Add a flash message to indicate that the user has already rated this book
-                $this->addFlash('error', 'You have already rated this book.');
+            // Check if the user has already rated this book
+            $existingRating = $entityManager->getRepository(BookRead::class)->findOneBy([
+                'user' => $user,
+                'book' => $book,
+            ]);
+        }
+        if ($existingRating) {
+            // Add a flash message to indicate that the user has already rated this book
+            $this->addFlash('error', 'You have already rated this book.');
 
-                return $this->redirectToRoute('book');
-            }
+            return $this->redirectToRoute('book');
+        }
         if ($book) {
             $bookRead = new BookRead();
             $bookRead->setUser($user);
@@ -103,5 +120,70 @@ class HomeController extends AbstractController
         }
 
         return $this->redirectToRoute('app.home');
+    }
+
+    // #[Route('/book/read/{id}', name: 'book_read_data', methods: ['GET'])]
+    // public function getBookReadData(int $id, EntityManagerInterface $entityManager): JsonResponse
+    // {
+    //     $bookRead = $entityManager->getRepository(BookRead::class)->find($id);
+
+    //     if (!$bookRead) {
+    //         return new JsonResponse(['error' => 'BookRead not found'], Response::HTTP_NOT_FOUND);
+    //     }
+
+    //     $data = [
+    //         'id' => $bookRead->getId(),
+    //         'book' => [
+    //             'title' => $bookRead->getBook()->getName(),
+    //         ],
+    //         'description' => $bookRead->getDescription(),
+    //         'rating' => $bookRead->getRating(),
+    //         'isFinished' => $bookRead->getIsFinished(),
+    //     ];
+
+    //     return new JsonResponse($data);
+    // }
+
+    #[Route('/book/edit', name: 'book_edit', methods: ['POST'])]
+    public function edit(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $bookReadId = $request->request->get('bookReadId');
+        $bookRead = $entityManager->getRepository(BookRead::class)->find($bookReadId);
+
+        if (!$bookRead || $bookRead->getUser() !== $user) {
+            $this->addFlash('error', 'You are not authorized to edit this rating.');
+            return $this->redirectToRoute('app.home');
+        }
+
+        if ($request->isMethod('POST')) {
+            $description = $request->request->get('comment');
+            $rating = $request->request->get('rating');
+            $isFinished = $request->request->get('isFinished');
+
+            $bookRead->setDescription($description);
+            $bookRead->setRating($rating);
+            $bookRead->setFinished($isFinished);
+            if ($isFinished == 'true') {
+                $bookRead->setRead(false);
+            } else {
+                $bookRead->setRead(true);
+            }
+            $bookRead->setUpdatedAt(new \DateTime());
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Book rating updated successfully.');
+
+            return $this->redirectToRoute('app.home');
+        }
+
+        return $this->render('modals/edit.html.twig', [
+            'bookRead' => $bookRead,
+        ]);
     }
 }

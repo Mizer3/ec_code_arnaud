@@ -71,12 +71,52 @@
     <!-- End of Base -->
     {% include 'modals/search.html.twig' %}
     {% include 'modals/book.html.twig' %}
+    {% include 'modals/edit.html.twig' %}
     <!-- End of Page -->
 
     <!-- Scripts -->
     <script src="{{ asset('metronic/js/core.bundle.js') }}"></script>
     <script src="{{ asset('metronic/vendors/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('metronic/js/widgets/general.js') }}"></script>
+    {# <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-modal-toggle]').forEach(function(element) {
+        element.addEventListener('click', function(event) {
+            event.preventDefault();
+            const bookReadId = element.getAttribute('data-bookread-id');
+            const modal = document.querySelector(element.getAttribute('data-modal-toggle'));
+
+            if (modal && bookReadId) {
+                fetch(`/book/read/${bookReadId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the modal with the data
+                    document.getElementById('editBookId').value = data.id;
+                    document.getElementById('book_name').textContent = data.book.title;
+                    document.getElementById('editBookDescription').value = data.description;
+                    modal.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching book read data:', error));
+            }
+        });
+    });
+
+    document.querySelectorAll('.modal .close').forEach(function(element) {
+        element.addEventListener('click', function(event) {
+            event.preventDefault();
+            const modal = element.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+});
+</script> #}
     <!-- End of Scripts -->
 </body>
 </html>
