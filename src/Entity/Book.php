@@ -25,6 +25,9 @@ class Book
     #[ORM\Column]
     private ?int $pages = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $cover = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $publication_date = null;
 
@@ -85,6 +88,18 @@ class Book
     public function setPages(int $pages): static
     {
         $this->pages = $pages;
+
+        return $this;
+    }
+
+    public function getCover(): ?string
+    {
+        return $this->cover;
+    }
+
+    public function setCover(?string $cover): self
+    {
+        $this->cover = $cover;
 
         return $this;
     }
