@@ -12,6 +12,7 @@ use App\Entity\BookRead;
 use App\Entity\Category;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends AbstractController
@@ -107,6 +108,8 @@ class HomeController extends AbstractController
             ]);
         }
 
+        $categories = $entityManager->getRepository(Category::class)->findAll();
+
         // Render the 'hello.html.twig' template
         return $this->render('pages/home.html.twig', [
             'books' => $allBooks,
@@ -120,6 +123,7 @@ class HomeController extends AbstractController
             'categoryData' => $categoryData,
             'searchTerm' => $searchTerm,
             'searchFinishedTerm' => $searchFinishedTerm,
+            'categories' => $categories,
         ]);
     }
 
@@ -237,5 +241,44 @@ class HomeController extends AbstractController
         return $this->render('modals/edit.html.twig', [
             'bookRead' => $bookRead,
         ]);
+    }
+
+    #[Route('/new-book', name: 'book_new', methods: ['GET', 'POST'])]
+    public function newBook(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if ($request->isMethod('POST')) {
+            $book = new Book();
+            $book->setName($request->request->get('name'));
+            $book->setDescription($request->request->get('description'));
+            $book->setPages($request->request->get('pages'));
+            $book->setCategory($entityManager->getRepository(Category::class)->find($request->request->get('category')));
+            $book->setPublicationDate(new \DateTime($request->request->get('publicationDate')));
+            $book->setCreatedAt(new \DateTime());
+            $book->setUpdatedAt(new \DateTime());
+
+            /** @var UploadedFile $coverFile */
+            $coverFile = $request->files->get('cover');
+            if ($coverFile) {
+                $newFilename = uniqid().'.'.$coverFile->guessExtension();
+
+                try {
+                    $coverFile->move(
+                        $this->getParameter('covers_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Handle exception if something happens during file upload
+                }
+
+                $book->setCover($newFilename);
+            }
+
+            $entityManager->persist($book);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app.home');
+        }
+
+        return $this->render('modals/newBook.html.twig');
     }
 }
