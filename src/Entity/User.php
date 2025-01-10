@@ -159,4 +159,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->bookReads;
     }
+
+    public function __toString()
+    {
+        return $this->email;
+    }
 }

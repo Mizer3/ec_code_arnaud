@@ -3,11 +3,12 @@
         <h3 class="card-title">
             Mes lectures en cours
         </h3>
-        <div class="input input-sm max-w-48">
-            <i class="ki-filled ki-magnifier">
-            </i>
-            <input data-datatable-search="#current-books-table" placeholder="Rechercher" type="text"/>
-        </div>
+        <form method="get" action="{{ path('app.home') }}">
+            <div class="input-group">
+                <input name="search" id="search" placeholder="Rechercher" type="text" value="{{ app.request.query.get('search') }}"/>
+                <button type="submit"><i class="ki-filled ki-magnifier"></i></button>
+            </div>
+        </form>
     </div>
     <div class="card-body">
         <div id="current-books-table" data-datatable="true" data-datatable-page-size="5">
