@@ -5,8 +5,40 @@
         </h3>
     </div>
     <div class="card-body flex flex-col gap-5">
-        <figure>
-            <img src="{{  asset('media/charts/Radar_Sample.png') }}" alt="Radar Sample"/>
-        </figure>
+        <div id="radarChart" style="height: 500px; width: 100%;"></div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryNames = {{ categoryData|map(attribute => attribute.name)|json_encode|raw }};
+    const booksReadCounts = {{ categoryData|map(attribute => attribute.booksReadCount)|json_encode|raw }};
+    const booksFinishedCounts = {{ categoryData|map(attribute => attribute.booksFinishedCount)|json_encode|raw }};
+
+    const options = {
+        series: [{
+            name: 'Livres en cours de lecture',
+            data: booksReadCounts,
+        }, {
+            name: 'Livres terminé',
+            data: booksFinishedCounts,
+        }],
+        chart: {
+            height: 500,
+            width: '100%',
+            type: 'radar',
+        },
+        title: {
+            text: 'Répartition de mes lectures'
+        },
+        xaxis: {
+            categories: categoryNames
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#radarChart"), options);
+    chart.render();
+});
+</script>
