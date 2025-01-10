@@ -127,6 +127,34 @@ class HomeController extends AbstractController
         ]);
     }
 
+    // #[Route('/book/read', name: 'book_read', methods: ['POST'])]
+    // public function read(Request $request, EntityManagerInterface $entityManager): Response
+    // {
+    //     $user = $this->getUser();
+    //     if (!$user) {
+    //         return new JsonResponse(['success' => false, 'message' => 'User not authenticated'], Response::HTTP_UNAUTHORIZED);
+    //     }
+
+    //     $bookRead = new BookRead();
+    //     $bookRead->setUser($user);
+    //     $bookRead->setBook($entityManager->getRepository(Book::class)->find($request->request->get('book')));
+    //     $bookRead->setDescription($request->request->get('description'));
+    //     $bookRead->setFinished($request->request->get('isFinished'));
+    //     if ($request->request->get('isFinished') == 'true') {
+    //         $bookRead->setRead(false);
+    //     } else {
+    //         $bookRead->setRead(true);
+    //     }
+    //     $bookRead->setRating($request->request->get('rating'));
+    //     $bookRead->setCreatedAt(new \DateTime());
+    //     $bookRead->setUpdatedAt(new \DateTime());
+
+    //     $entityManager->persist($bookRead);
+    //     $entityManager->flush();
+
+    //     return new JsonResponse(['success' => true]);
+    // }
+
     #[Route('/book/read', name: 'book_read', methods: ['POST'])]
     public function read(Request $request, EntityManagerInterface $entityManager): Response
     {
