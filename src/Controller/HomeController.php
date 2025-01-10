@@ -42,15 +42,6 @@ class HomeController extends AbstractController
             return !in_array($book->getId(), $ratedBookIds);
         });
 
-        $booksReading = $entityManager->getRepository(BookRead::class)->findBy([
-            'user' => $user,
-            'isFinished' => false,
-        ]);
-        $booksFinished = $entityManager->getRepository(BookRead::class)->findBy([
-            'user' => $user,
-            'isFinished' => true,
-        ]);
-
         // $bookReadId = $request->query->get('bookReadId');
         // $bookRead = null;
         // if ($bookReadId) {
@@ -95,6 +86,24 @@ class HomeController extends AbstractController
                 'booksReadCount' => $booksReadCount,
                 'booksFinishedCount' => $booksFinishedCount,
             ];
+        }
+        if ($user){
+            if ($request->query->get('search')) {
+                $booksReading = $entityManager->getRepository(BookRead::class)->searchBooksByName($request->query->get('search'));
+            }}
+        $booksReading = $entityManager->getRepository(BookRead::class)->findBy([
+            'user' => $user,
+            'isFinished' => false,
+        ]);
+
+        if($user){
+            if ($request->query->get('searchfinished')){
+                $booksFinished = $entityManager->getRepository(BookRead::class)->searchFinishedBooksByName($request->query->get('searchfinished'));
+            }
+        $booksFinished = $entityManager->getRepository(BookRead::class)->findBy([
+            'user' => $user,
+            'isFinished' => true,
+        ]);
         }
 
         // Render the 'hello.html.twig' template

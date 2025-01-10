@@ -34,4 +34,25 @@ class BookReadRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function searchBooksByName($searchTerm)
+    {
+        return $this->createQueryBuilder('br')
+            ->join('br.book', 'b')
+            ->andWhere('b.name LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function searchFinishedBooksByName($searchTerm)
+    {
+        return $this->createQueryBuilder('br')
+            ->join('br.book', 'b')
+            ->andWhere('b.name LIKE :searchTerm')
+            ->andWhere('br.isFinished = true')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }
