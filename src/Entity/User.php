@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -16,7 +18,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
@@ -32,6 +34,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, BookRead>
+     */
+    #[ORM\ManyToMany(targetEntity: BookRead::class, inversedBy: 'users')]
+    private Collection $bookRead;
+
+    /**
+     * @var Collection<int, BookRead>
+     */
+    #[ORM\OneToMany(targetEntity: BookRead::class, mappedBy: 'user')]
+    private Collection $bookReads;
+
+    public function __construct()
+    {
+        $this->bookRead = new ArrayCollection();
+        $this->bookReads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,5 +126,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, BookRead>
+     */
+    public function getBookRead(): Collection
+    {
+        return $this->bookRead;
+    }
+
+    public function addBookRead(BookRead $bookRead): static
+    {
+        if (!$this->bookRead->contains($bookRead)) {
+            $this->bookRead->add($bookRead);
+        }
+
+        return $this;
+    }
+
+    public function removeBookRead(BookRead $bookRead): static
+    {
+        $this->bookRead->removeElement($bookRead);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookRead>
+     */
+    public function getBookReads(): Collection
+    {
+        return $this->bookReads;
     }
 }

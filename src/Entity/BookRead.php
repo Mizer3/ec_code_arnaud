@@ -7,18 +7,15 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookReadRepository::class)]
+#[ORM\Table(name: "book_read", uniqueConstraints: [
+    new ORM\UniqueConstraint(name: "user_book_unique", columns: ["user_id", "book_id"])
+])]
 class BookRead
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $user_id = null;
-
-    #[ORM\Column(type: Types::BIGINT)]
-    private ?string $book_id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $rating = null;
@@ -35,36 +32,24 @@ class BookRead
     #[ORM\Column]
     private ?\DateTime $created_at = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTime $updated_at = null;
+
+    #[ORM\Column]
+    private ?bool $isFinished = null;
+
+    #[ORM\ManyToOne(inversedBy: 'bookReads')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'bookReads')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Book $book = null;
+
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(int $user_id): static
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
-
-    public function getBookId(): ?string
-    {
-        return $this->book_id;
-    }
-
-    public function setBookId(string $book_id): static
-    {
-        $this->book_id = $book_id;
-
-        return $this;
     }
 
     public function getRating(): ?string
@@ -135,6 +120,42 @@ class BookRead
     public function setUpdatedAt(\DateTime $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function isFinished(): ?bool
+    {
+        return $this->isFinished;
+    }
+
+    public function setFinished(bool $isFinished): static
+    {
+        $this->isFinished = $isFinished;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBook(): ?Book
+    {
+        return $this->book;
+    }
+
+    public function setBook(?Book $book): static
+    {
+        $this->book = $book;
 
         return $this;
     }

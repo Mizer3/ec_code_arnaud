@@ -25,7 +25,8 @@ class BookReadRepository extends ServiceEntityRepository
     public function findByUserId(int $userId, bool $readState): array
     {
         return $this->createQueryBuilder('r')
-            ->where('r.user_id = :userId')
+            ->join('r.user', 'u')
+            ->where('u.id = :userId')
             ->andWhere('r.is_read = :isRead')
             ->setParameter('userId', $userId)
             ->setParameter('isRead', $readState)
