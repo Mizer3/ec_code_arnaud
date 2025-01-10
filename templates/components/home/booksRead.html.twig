@@ -53,18 +53,12 @@
 								<td>{{ bookFinished.book.category.name }}</td>
 								<td>
 									<div class="rating">
-										{% for i in 1..bookFinished.rating %}
-											<div class="rating-label checked">
-												<i class="rating-on ki-solid ki-star text-base leading-none"></i>
-												<i class="rating-off ki-outline ki-star text-base leading-none"></i>
-											</div>
-										{% endfor %}
-										{% for i in (bookFinished.rating + 1)..5 %}
-											<div class="rating-label">
-												<i class="rating-on ki-solid ki-star text-base leading-none"></i>
-												<i class="rating-off ki-outline ki-star text-base leading-none"></i>
-											</div>
-										{% endfor %}
+										{% for i in 1..5 %}
+                                            <div class="rating-label {% if i <= bookFinished.rating %}checked{% endif %}">
+                                                <i class="rating-on ki-solid ki-star text-base leading-none"></i>
+                                                <i class="rating-off ki-outline ki-star text-base leading-none"></i>
+                                            </div>
+                                        {% endfor %}
 									</div>
 								</td>
 							</tr>

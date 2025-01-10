@@ -267,7 +267,7 @@ class HomeController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // Handle exception if something happens during file upload
+                    
                 }
 
                 $book->setCover($newFilename);
