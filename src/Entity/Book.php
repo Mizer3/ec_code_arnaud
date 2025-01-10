@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,6 +36,17 @@ class Book
 
     #[ORM\Column]
     private ?\DateTime $updated_at = null;
+
+    /**
+     * @var Collection<int, BookRead>
+     */
+    #[ORM\OneToMany(targetEntity: BookRead::class, mappedBy: 'book')]
+    private Collection $bookReads;
+
+    public function __construct()
+    {
+        $this->bookReads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,6 +133,36 @@ class Book
     public function setUpdatedAt(\DateTime $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookRead>
+     */
+    public function getBookReads(): Collection
+    {
+        return $this->bookReads;
+    }
+
+    public function addBookRead(BookRead $bookRead): static
+    {
+        if (!$this->bookReads->contains($bookRead)) {
+            $this->bookReads->add($bookRead);
+            $bookRead->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookRead(BookRead $bookRead): static
+    {
+        if ($this->bookReads->removeElement($bookRead)) {
+            // set the owning side to null (unless already changed)
+            if ($bookRead->getBook() === $this) {
+                $bookRead->setBook(null);
+            }
+        }
 
         return $this;
     }
