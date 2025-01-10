@@ -5,7 +5,7 @@
 		</h3>
 		<form method="get" action="{{ path('app.home') }}">
             <div class="input-group">
-                <input name="searchFinished" id="searchFinished" placeholder="Rechercher" type="text" value="{{ app.request.query.get('searchFinished') }}"/>
+                <input name="searchFinished" id="searchFinished" placeholder="Rechercher" type="text" value="{{ searchFinishedTerm }}"/>
                 <button type="submit"><i class="ki-filled ki-magnifier"></i></button>
             </div>
         </form>

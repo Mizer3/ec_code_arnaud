@@ -87,23 +87,24 @@ class HomeController extends AbstractController
                 'booksFinishedCount' => $booksFinishedCount,
             ];
         }
-        if ($user){
-            if ($request->query->get('search')) {
-                $booksReading = $entityManager->getRepository(BookRead::class)->searchBooksByName($request->query->get('search'));
-            }}
-        $booksReading = $entityManager->getRepository(BookRead::class)->findBy([
-            'user' => $user,
-            'isFinished' => false,
-        ]);
+        $searchTerm = $request->query->get('search', '');
+        if ($searchTerm) {
+            $booksReading = $entityManager->getRepository(BookRead::class)->searchBooksByName($userId, $searchTerm);
+        } else {
+            $booksReading = $entityManager->getRepository(BookRead::class)->findBy([
+                'user' => $user,
+                'isFinished' => false,
+            ]);
+        }
 
-        if($user){
-            if ($request->query->get('searchfinished')){
-                $booksFinished = $entityManager->getRepository(BookRead::class)->searchFinishedBooksByName($request->query->get('searchfinished'));
-            }
-        $booksFinished = $entityManager->getRepository(BookRead::class)->findBy([
-            'user' => $user,
-            'isFinished' => true,
-        ]);
+        $searchFinishedTerm = $request->query->get('searchFinished', '');
+        if ($searchFinishedTerm) {
+            $booksFinished = $entityManager->getRepository(BookRead::class)->searchFinishedBooksByName($userId, $searchFinishedTerm);
+        } else {
+            $booksFinished = $entityManager->getRepository(BookRead::class)->findBy([
+                'user' => $user,
+                'isFinished' => true,
+            ]);
         }
 
         // Render the 'hello.html.twig' template
@@ -116,7 +117,9 @@ class HomeController extends AbstractController
             'booksReading' => $booksReading,
             // 'bookRead' => $bookRead,
             'booksFinished' => $booksFinished, 
-            'categoryData' => $categoryData,   
+            'categoryData' => $categoryData,
+            'searchTerm' => $searchTerm,
+            'searchFinishedTerm' => $searchFinishedTerm,
         ]);
     }
 
